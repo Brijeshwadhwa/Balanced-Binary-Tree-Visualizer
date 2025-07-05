@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Balanced Binary Tree Visualizer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1, h2, p {
+      text-align: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .tree-container {
+      border: 2px solid #00ffcc;
+      padding: 20px;
+      border-radius: 10px;
+      min-width: 600px;
+      background-color: #111;
+    }
+
+    #tree {
+      width: 100%;
+      height: 400px;
+    }
+
+    .balanced {
+      color: #00ffcc;
+    }
+
+    .not-balanced {
+      color: #ff3333;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    pre {
+      background: #222;
+      color: #00ffcc;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌳 Balanced Binary Tree Visualizer</h1>
+  <p>Enter tree as level-order (comma separated), e.g. <code>1,2,3,null,4</code></p>
+
+  <center>
+    <input type="text" id="treeInput" placeholder='1,2,3,null,null,4,5' />
+    <button onclick="buildTree()">Check Balance & Visualize</button>
+    <div id="result" class="balanced"></div>
+  </center>
+
+  <div class="container">
+    <div class="tree-container">
+      <svg id="tree"></svg>
+    </div>
+  </div>
+
+    <h2>✅ Check if a Tree is Balanced</h2>
+
+<p>
+  A binary tree is considered <strong>height-balanced</strong> if, for every node in the tree, 
+  the height difference between its left and right subtrees is no more than 1. 
+  This property ensures that the tree remains approximately balanced in shape, 
+  which is crucial for maintaining optimal performance in many tree operations like search, insertion, and deletion.
+</p>
+
+<h3>📘 Key Terminologies</h3>
+<ul>
+  <li>
+    <strong>Node:</strong> The fundamental building block of a tree structure. 
+    Each node contains a data value and may have links (pointers) to one or more child nodes.
+  </li>
+  <li>
+    <strong>Root:</strong> The topmost node of the tree. It is the only node that has no parent.
+  </li>
+  <li>
+    <strong>Parent:</strong> A node that has one or more child nodes connected to it.
+  </li>
+  <li>
+    <strong>Child:</strong> A node that descends from another node (its parent).
+  </li>
+  <li>
+    <strong>Leaf:</strong> A node that has no children.
+  </li>
+  <li>
+    <strong>Subtree:</strong> A tree consisting of a node and all its descendants.
+  </li>
+  <li>
+    <strong>Balanced Binary Tree:</strong> A binary tree in which the depth (or height) difference between the left and right subtrees of every node is at most 1. This condition ensures that the tree is not skewed and provides efficient performance for operations.
+  </li>
+</ul>
+
+  <!--<h2>🧠 What is a Balanced Binary Tree?</h2>
+  <p>A binary tree is <strong>height-balanced</strong> if for every node, the height difference between its left and right subtrees is at most 1.</p>
+
+  <h2>📌 How It Works (Algorithm)</h2>
+  <pre>
+function isBalanced(root):
+    checkHeight(root) != -1
+
+function checkHeight(node):
+    if node is null: return 0
+    left = checkHeight(node.left)
+    right = checkHeight(node.right)
+    if abs(left - right) > 1: return -1
+    return max(left, right) + 1
+  </pre>-->
+
+ <h2>📌 How It Works (Algorithm)</h2>
+
+<p>The idea is to use a recursive function that returns the height of the subtree rooted at a given node, while also checking whether the subtree is balanced. If at any point the subtree is found to be unbalanced, we return <code>-1</code> as a signal. Otherwise, we return the actual height of the subtree.</p>
+
+<h3>💡 C++ Code Implementation</h3>
+
+<pre>
+#include <<iostream>iostream>
+using namespace std;
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+class Solution {
+public:
+    // Main function to check if the tree is balanced
+    bool isBalanced(TreeNode* root) {
+        return checkHeight(root) != -1;
+    }
+
+private:
+    // Helper function to get height and check balance
+    int checkHeight(TreeNode* node) {
+        if (node == NULL) return 0;
+
+        int left = checkHeight(node->left);
+        if (left == -1) return -1;  // Left subtree not balanced
+
+        int right = checkHeight(node->right);
+        if (right == -1) return -1;  // Right subtree not balanced
+
+        if (abs(left - right) > 1) return -1;  // Current node not balanced
+
+        return max(left, right) + 1;  // Return height if balanced
+    }
+};
+</pre>
+
+
+  <script>
+    const svg = document.getElementById('tree');
+
+    function clearSVG() {
+      svg.innerHTML = '';
+    }
+
+    function drawNode(x, y, val) {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', 20);
+      circle.setAttribute('stroke', '#00ffcc');
+      circle.setAttribute('stroke-width', '2');
+      circle.setAttribute('fill', 'black');
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x);
+      text.setAttribute('y', y + 5);
+      text.setAttribute('fill', '#fff');
+      text.setAttribute('font-size', '16');
+      text.setAttribute('text-anchor', 'middle');
+      text.textContent = val;
+
+      svg.appendChild(circle);
+      svg.appendChild(text);
+    }
+
+    function drawLine(x1, y1, x2, y2) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('stroke', '#aaa');
+      svg.appendChild(line);
+    }
+
+    function renderTree(node, x, y, depth, spread) {
+      if (!node) return;
+      drawNode(x, y, node.val);
+
+      const offsetY = 80;
+
+      if (node.left) {
+        drawLine(x, y, x - spread, y + offsetY);
+        renderTree(node.left, x - spread, y + offsetY, depth + 1, spread / 1.5);
+      }
+      if (node.right) {
+        drawLine(x, y, x + spread, y + offsetY);
+        renderTree(node.right, x + spread, y + offsetY, depth + 1, spread / 1.5);
+      }
+    }
+
+    function checkHeight(node) {
+      if (!node) return 0;
+
+      let left = checkHeight(node.left);
+      if (left === -1) return -1;
+
+      let right = checkHeight(node.right);
+      if (right === -1) return -1;
+
+      if (Math.abs(left - right) > 1) return -1;
+
+      return Math.max(left, right) + 1;
+    }
+
+    function isBalanced(node) {
+      return checkHeight(node) !== -1;
+    }
+
+    function buildTreeFromArray(arr) {
+      if (!arr.length || arr[0] === null) return null;
+
+      const nodes = arr.map(val => val === null ? null : { val, left: null, right: null });
+
+      let i = 0;
+      for (let j = 1; j < nodes.length; j += 2) {
+        if (nodes[i]) {
+          nodes[i].left = nodes[j];
+          nodes[i].right = nodes[j + 1] ?? null;
+        }
+        i++;
+      }
+      return nodes[0];
+    }
+
+    function buildTree() {
+      clearSVG();
+      const input = document.getElementById("treeInput").value.trim();
+      const result = document.getElementById("result");
+
+      if (!input) return alert("Please enter a valid tree input");
+
+      const arr = input.split(",").map(s => {
+        const val = s.trim();
+        return val === "null" ? null : parseInt(val);
+      });
+
+      const root = buildTreeFromArray(arr);
+      const balanced = isBalanced(root);
+
+      renderTree(root, 300, 40, 1, 120);
+
+      result.innerText = balanced ? "✅ Tree is Balanced" : "❌ Tree is NOT Balanced";
+      result.className = balanced ? "balanced" : "not-balanced";
+    }
+  </script>
+</body>
+</html>
